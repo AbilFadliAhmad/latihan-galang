@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modest Nature Gallery — Premium</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- AOS (Animate on Scroll) -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <!-- GLightbox (lightbox) -->
+  <link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent1: #89f7fe;
+      --accent2: #66a6ff;
+      --card-bg: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.75);
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(120deg,#13294b,#1b3a6b,#0066a9,#003f7f);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      color: #f6f9fb;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    /* 4D floating blobs (glowing, blurred) */
+    .bg-blob{
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      filter: blur(48px);
+      opacity: .18;
+      pointer-events: none;
+      z-index: -2;
+      mix-blend-mode: screen;
+    }
+    .blob--a{ background: radial-gradient(circle at 30% 30%, rgba(137,247,254,.9), rgba(102,166,255,.4)); top:6%; left:4%; animation: floatA 14s ease-in-out infinite; }
+    .blob--b{ background: radial-gradient(circle at 30% 30%, rgba(134,227,206,.95), rgba(102,166,255,.35)); top:60%; right:10%; animation: floatB 18s ease-in-out infinite; }
+    .blob--c{ background: radial-gradient(circle at 70% 70%, rgba(255,200,120,.9), rgba(102,166,255,.25)); bottom:6%; left:20%; animation: floatC 16s ease-in-out infinite; }
+
+    @keyframes floatA { 0%{transform:translate(0,0)}50%{transform:translate(40px,-60px)}100%{transform:translate(0,0)}}
+    @keyframes floatB { 0%{transform:translate(0,0)}50%{transform:translate(-40px,50px)}100%{transform:translate(0,0)}}
+    @keyframes floatC { 0%{transform:translate(0,0)}50%{transform:translate(30px,-40px)}100%{transform:translate(0,0)}}
+
+    /* glass navbar */
+    .navbar {
+      background: rgba(12,16,24,0.45);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .navbar-brand { color: var(--accent1); font-weight:800; }
+    .nav-link { color: var(--muted); font-weight:600; }
+    .nav-link:hover { color: var(--accent2); }
+
+    /* Hero */
+    .hero {
+      padding: 110px 0 40px;
+      position: relative;
+    }
+    .hero .lead { color: rgba(255,255,255,0.9); font-size:1.05rem; }
+
+    .card-dark {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 14px;
+    }
+
+    /* Portfolio grid */
+    .portfolio-img{
+      width:100%; height:220px; object-fit:cover; border-radius:12px; transition: transform .45s ease, box-shadow .45s ease;
+      box-shadow: 0 6px 20px rgba(2,6,23,0.5);
+    }
+    .portfolio-item:hover .portfolio-img { transform:scale(1.04); box-shadow: 0 18px 60px rgba(0,0,0,0.6); }
+    .portfolio-caption {
+      background:#fff; color:#000; font-weight:700; padding:10px 12px; border-radius:8px; margin-top:8px; display:block;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    /* facts counter */
+    .fact-number { font-weight:800; font-size:2.25rem; background: linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color: transparent; }
+
+    /* service card */
+    .service-card { background: rgba(255,255,255,0.02); border-radius:12px; padding:22px; border:1px solid rgba(255,255,255,0.03); transition: transform .3s ease, box-shadow .3s ease; }
+    .service-card:hover{ transform: translateY(-8px); box-shadow: 0 18px 60px rgba(2,6,23,0.55); }
+
+    /* contact form */
+    .form-control, .btn { border-radius:10px; }
+
+    /* footer */
+    footer { margin-top:48px; padding:30px 0; background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.22)); color: rgba(255,255,255,0.8); }
+
+    /* back to top */
+    #backToTop{ position:fixed; right:18px; bottom:18px; z-index:9999; display:none; width:48px; height:48px; border-radius:50%; background: linear-gradient(135deg,var(--accent1),var(--accent2)); color:#001; align-items:center; justify-content:center; box-shadow: 0 12px 30px rgba(0,0,0,0.45); cursor:pointer; }
+
+    /* responsive tweak */
+    @media (max-width:767px){
+      .portfolio-img{ height:180px; }
+      .hero{ padding-top:86px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 4D blobs -->
+  <div class="bg-blob blob--a" aria-hidden="true"></div>
+  <div class="bg-blob blob--b" aria-hidden="true"></div>
+  <div class="bg-blob blob--c" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Modest Nature</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navMenu" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto gap-3">
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#facts">Facts</a></li>
+          <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#clients">Clients</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-5" data-aos="fade-right">
+          <img src="https://picsum.photos/seed/gunung/900/700" alt="Pemandangan pegunungan di pagi hari dengan cahaya matahari lembut" class="img-fluid rounded-3 card-dark shadow-sm">
+        </div>
+        <div class="col-lg-7" data-aos="fade-left">
+          <h1 class="display-6 fw-bold">Keindahan Alam yang Menginspirasi</h1>
+          <p class="lead mt-3">Jelajahi koleksi foto pemandangan yang menenangkan — dari hutan, danau, pantai hingga langit senja. Setiap foto dikurasi untuk menghadirkan suasana damai dan nilai estetika tinggi.</p>
+          <div class="mt-4">
+            <a href="#portfolio" class="btn btn-lg btn-primary me-2">Jelajahi Koleksi</a>
+            <a href="#contact" class="btn btn-outline-light btn-lg">Hubungi Kami</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SERVICES -->
+  <section id="services" class="py-5">
+    <div class="container">
+      <div class="row g-4 text-center">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-card h-100">
+            <div class="mb-3"><i class="fa fa-file-image-o fa-2x" style="color:var(--accent1)"></i></div>
+            <h5 class="mb-2">Foto Alam Berkualitas</h5>
+            <p class="mb-0">Foto beresolusi tinggi untuk desain, cetak, maupun publikasi digital.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-card h-100">
+            <div class="mb-3"><i class="fa fa-camera fa-2x" style="color:var(--accent2)"></i></div>
+            <h5 class="mb-2">Dokumentasi Perjalanan</h5>
+            <p class="mb-0">Mengabadikan momen perjalanan dengan komposisi dan warna yang natural.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="service-card h-100">
+            <div class="mb-3"><i class="fa fa-globe fa-2x" style="color:#9ef0d0"></i></div>
+            <h5 class="mb-2">Eksplorasi Dunia</h5>
+            <p class="mb-0">Galeri internasional yang menampilkan pemandangan dari berbagai negara.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACTS -->
+  <section id="facts" class="py-5">
+    <div class="container" data-aos="fade-up">
+      <div class="row text-center g-4">
+        <div class="col-md-3">
+          <div class="card card-dark p-4 border-0">
+            <div class="fact-number" data-count="1604">0</div>
+            <div class="text-muted">Foto Alam Diambil</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-dark p-4 border-0">
+            <div class="fact-number" data-count="21">0</div>
+            <div class="text-muted">Lokasi Eksplorasi</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-dark p-4 border-0">
+            <div class="fact-number" data-count="302">0</div>
+            <div class="text-muted">Klien Puas</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-dark p-4 border-0">
+            <div class="fact-number" data-count="946">0</div>
+            <div class="text-muted">Cangkir Kopi Diminum</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="py-5">
+    <div class="container">
+      <div class="mb-4" data-aos="fade-up">
+        <h3 class="fw-bold">Koleksi Alam Kami</h3>
+        <p class="text-muted">Klik gambar untuk melihat dalam ukuran penuh.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- item 1 -->
+        <div class="col-md-4 portfolio-item" data-aos="fade-up" data-aos-delay="50">
+          <a href="https://picsum.photos/seed/hutan/1600/1200" class="glightbox" data-gallery="nature" data-title="Hutan Tenang — Hutan hijau yang dipenuhi pepohonan tinggi, menghadirkan ketenangan alami.">
+            <img class="portfolio-img" src="https://picsum.photos/seed/hutan/800/600" alt="Hutan hijau yang tenang dengan pohon menjulang tinggi dan suasana damai.">
+          </a>
+          <span class="portfolio-caption">Hutan Tenang</span>
+          <p class="mt-2 portfolio-desc" style="background:#fff; color:#000; padding:10px; border-radius:8px; font-weight:700;">
+            Hutan hijau yang dipenuhi pepohonan tinggi, menghadirkan ketenangan alami.
+          </p>
+        </div>
+
+        <!-- item 2 -->
+        <div class="col-md-4 portfolio-item" data-aos="fade-up" data-aos-delay="100">
+          <a href="https://picsum.photos/seed/danau/1600/1200" class="glightbox" data-gallery="nature" data-title="Danau Sunyi — Permukaan danau jernih memantulkan langit biru dan pegunungan.">
+            <img class="portfolio-img" src="https://picsum.photos/seed/danau/800/600" alt="Danau sunyi dengan permukaan air jernih yang memantulkan langit cerah.">
+          </a>
+          <span class="portfolio-caption">Danau Sunyi</span>
+          <p class="mt-2 portfolio-desc" style="background:#fff; color:#000; padding:10px; border-radius:8px; font-weight:700;">
+            Permukaan danau jernih yang memantulkan keindahan langit dan pegunungan.
+          </p>
+        </div>
+
+        <!-- item 3 -->
+        <div class="col-md-4 portfolio-item" data-aos="fade-up" data-aos-delay="150">
+          <a href="https://picsum.photos/seed/pantai/1600/1200" class="glightbox" data-gallery="nature" data-title="Pantai Pasir Putih — Hamparan pasir putih bersih dan ombak lembut.">
+            <img class="portfolio-img" src="https://picsum.photos/seed/pantai/800/600" alt="Pantai berpasir putih dengan ombak lembut dan suasana tropis.">
+          </a>
+          <span class="portfolio-caption">Pantai Pasir Putih</span>
+          <p class="mt-2 portfolio-desc" style="background:#fff; color:#000; padding:10px; border-radius:8px; font-weight:700;">
+            Hamparan pasir putih yang memanjakan mata dengan debur ombak tenang.
+          </p>
+        </div>
+
+        <!-- item 4 -->
+        <div class="col-md-4 portfolio-item" data-aos="fade-up" data-aos-delay="200">
+          <a href="https://picsum.photos/seed/sungai/1600/1200" class="glightbox" data-gallery="nature" data-title="Sungai Mengalir — Aliran sungai yang tenang di tengah pepohonan.">
+            <img class="portfolio-img" src="https://picsum.photos/seed/sungai/800/600" alt="Aliran sungai jernih yang mengalir di antara pepohonan hijau.">
+          </a>
+          <span class="portfolio-caption">Sungai Mengalir</span>
+          <p class="mt-2 portfolio-desc" style="background:#fff; color:#000; padding:10px; border-radius:8px; font-weight:700;">
+            Sungai jernih yang mengalir lembut, menciptakan suara alam yang menenangkan.
+          </p>
+        </div>
+
+        <!-- item 5 -->
+        <div class="col-md-4 portfolio-item" data-aos="fade-up" data-aos-delay="250">
+          <a href="https://picsum.photos/seed/bukit/1600/1200" class="glightbox" data-gallery="nature" data-title="Bukit Hijau — Perbukitan luas berwarna hijau lembut.">
+            <img class="portfolio-img" src="https://picsum.photos/seed/bukit/800/600" alt="Perbukitan hijau luas yang menenangkan mata.">
+          </a>
+          <span class="portfolio-caption">Bukit Hijau</span>
+          <p class="mt-2 portfolio-desc" style="background:#fff; color:#000; padding:10px; border-radius:8px; font-weight:700;">
+            Perbukitan hijau yang menyejukkan pandangan dan pikiran.
+          </p>
+        </div>
+
+        <!-- item 6 -->
+        <div class="col-md-4 portfolio-item" data-aos="fade-up" data-aos-delay="300">
+          <a href="https://picsum.photos/seed/langit/1600/1200" class="glightbox" data-gallery="nature" data-title="Langit Senja — Warna jingga-keemasan jelang matahari terbenam.">
+            <img class="portfolio-img" src="https://picsum.photos/seed/langit/800/600" alt="Langit senja berwarna oranye keemasan yang mempesona.">
+          </a>
+          <span class="portfolio-caption">Langit Senja</span>
+          <p class="mt-2 portfolio-desc" style="background:#fff; color:#000; padding:10px; border-radius:8px; font-weight:700;">
+            Perpaduan warna hangat saat senja yang menciptakan suasana magis.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section id="clients" class="py-5">
+    <div class="container text-center" data-aos="fade-up">
+      <h4 class="fw-bold mb-3">Apa Kata Mereka</h4>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="carousel slide" id="clientCarousel" data-bs-ride="carousel" data-bs-interval="4000">
+            <div class="carousel-inner text-light">
+              <div class="carousel-item active">
+                <blockquote class="blockquote">
+                  <p class="mb-2">"Foto-foto alamnya sangat menenangkan dan berkualitas tinggi."</p>
+                  <footer class="blockquote-footer text-white-50">Galang</footer>
+                </blockquote>
+              </div>
+              <div class="carousel-item">
+                <blockquote class="blockquote">
+                  <p class="mb-2">"Koleksinya benar-benar menunjukkan ketenangan alam."</p>
+                  <footer class="blockquote-footer text-white-50">Fadli</footer>
+                </blockquote>
+              </div>
+              <div class="carousel-item">
+                <blockquote class="blockquote">
+                  <p class="mb-2">"Saya menggunakan fotonya untuk proyek desain — hasilnya memuaskan."</p>
+                  <footer class="blockquote-footer text-white-50">Satrio</footer>
+                </blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-5">
+    <div class="container" data-aos="fade-up">
+      <div class="row g-4">
+        <div class="col-md-5">
+          <div class="card card-dark p-4 border-0">
+            <h5 class="fw-bold">Hubungi Kami</h5>
+            <p class="text-muted">Butuh foto untuk proyek Anda? Kirimkan detailnya dan kami akan membantu.</p>
+            <form id="contactForm" class="mt-3">
+              <div class="mb-2"><input class="form-control" name="name" placeholder="Nama" required></div>
+              <div class="mb-2"><input class="form-control" name="email" type="email" placeholder="Email" required></div>
+              <div class="mb-2"><input class="form-control" name="phone" placeholder="Telepon"></div>
+              <div class="mb-3"><textarea class="form-control" name="message" rows="4" placeholder="Pesan"></textarea></div>
+              <button class="btn btn-primary w-100" type="submit">Kirim Pesan</button>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="card card-dark p-4 h-100 border-0">
+            <h5 class="fw-bold">Informasi Kontak</h5>
+            <p class="text-muted mb-1"><strong>Email:</strong> info@company.com</p>
+            <p class="text-muted mb-1"><strong>Phone:</strong> 080-070-0120</p>
+            <p class="text-muted">Kami siap membantu Anda dalam kebutuhan fotografi alam dan dokumentasi perjalanan.</p>
+            <!-- Placeholder map box -->
+            <div style="height:260px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);">
+              Map placeholder
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>© 2025 Nature Gallery — All rights reserved.</div>
+      <div>
+        <a class="text-white-50 me-3" href="#"><i class="fa fa-facebook"></i></a>
+        <a class="text-white-50 me-3" href="#"><i class="fa fa-twitter"></i></a>
+        <a class="text-white-50" href="#"><i class="fa fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <div id="backToTop" title="Back to top" class="d-flex" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#001" viewBox="0 0 16 16"><path d="M8 12V4m0 0L4 8m4-4 4 4" stroke="#001" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- JS libs -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <script>
+    // Init AOS
+    AOS.init({ duration: 900, once: true, offset: 120 });
+
+    // Init GLightbox
+    const lightbox = GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('.nav-link').forEach(el=>{
+      el.addEventListener('click', (e)=>{
+        const target = el.getAttribute('href');
+        if(target.startsWith('#')){
+          e.preventDefault();
+          const node = document.querySelector(target);
+          if(node) node.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+
+    // Back to top show/hide
+    const back = document.getElementById('backToTop');
+    window.addEventListener('scroll', ()=>{
+      if(window.scrollY > 400) back.style.display = 'flex';
+      else back.style.display = 'none';
+    });
+    back.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+    // Simple counters
+    const counters = document.querySelectorAll('[data-count]');
+    const runCounters = () => {
+      counters.forEach(el=>{
+        const target = +el.getAttribute('data-count');
+        const start = 0;
+        const duration = 1800;
+        let startTime = null;
+        const step = (timestamp)=>{
+          if(!startTime) startTime = timestamp;
+          const progress = Math.min((timestamp - startTime)/duration,1);
+          el.textContent = Math.floor(progress * (target - start) + start);
+          if(progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    // run counters when facts visible (AOS already triggers, but ensure once)
+    const factsSection = document.getElementById('facts');
+    const obs = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ runCounters(); obs.disconnect(); }
+      });
+    }, {threshold:.4});
+    if(factsSection) obs.observe(factsSection);
+
+    // Parallax reaction for blobs (mouse)
+    const blobs = document.querySelectorAll('.bg-blob');
+    window.addEventListener('mousemove', (e)=>{
+      const cx = window.innerWidth/2, cy = window.innerHeight/2;
+      const dx = (e.clientX - cx)/cx; // -1..1
+      const dy = (e.clientY - cy)/cy;
+      blobs.forEach((b, i)=>{
+        const depth = (i+1) * 8; // different strength
+        b.style.transform = `translate(${dx * depth}px, ${dy * depth}px)`;
+      });
+    });
+
+    // Small entrance GSAP for hero image and heading
+    gsap.from(".hero .img-fluid", {opacity:0, x:-40, duration:1});
+    gsap.from(".hero h1, .hero .lead, .hero .btn", {opacity:0, y:20, duration:1, stagger:0.12, delay:0.2});
+
+    // Lightbox: add keyboard hint (optional)
+    lightbox.on('open', ()=>{/* optional hooks */});
+
+    // Contact form basic handler (demo only)
+    const contactForm = document.getElementById('contactForm');
+    if(contactForm){
+      contactForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const btn = contactForm.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = 'Mengirim...';
+        setTimeout(()=>{
+          btn.disabled = false; btn.textContent = 'Kirim Pesan';
+          alert('Terima kasih! Pesan Anda telah dikirim (demo).');
+          contactForm.reset();
+        }, 900);
+      });
+    }
+  </script>
+</body>
+</html>
